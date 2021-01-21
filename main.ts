@@ -158,3 +158,44 @@ img`
     .d11d1dd11d111d.
     `
 ]
+
+function introSequence(){
+    let invisibleCamera = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Camera)
+    scene.cameraFollowSprite(invisibleCamera)
+    tiles.placeOnTile(invisibleCamera, tiles.getTileLocation(25, 8))
+
+    story.queueStoryPart(function() {
+       let corGuy = sprites.create(corGuyImg, SpriteKind.CORGUY)
+    tiles.placeOnTile(corGuy, tiles.getTileLocation(28, 0))
+    corGuy.ay = 400
+
+        story.printDialog("Hey, I'm CorGuy the Door Guy! And you are a tumbleweed!)", 70, 50, 50, 100)
+        
+    })
+ 
+    story.queueStoryPart(function() {
+        let tumbleWeed = sprites.create(tumbleWeedImg, SpriteKind.Player)
+        tiles.placeOnTile(tumbleWeed, tiles.getTileLocation(25, 0))
+        tumbleWeed.ay = 300  
+    })
+    
+}
+
+introSequence()
