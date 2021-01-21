@@ -158,6 +158,7 @@ img`
     .d11d1dd11d111d.
     `
 ]
+let tumbleWeed: Sprite = null
 
 function introSequence(){
     let invisibleCamera = sprites.create(img`
@@ -186,16 +187,42 @@ function introSequence(){
     tiles.placeOnTile(corGuy, tiles.getTileLocation(28, 0))
     corGuy.ay = 400
 
-        story.printDialog("Hey, I'm CorGuy the Door Guy! And you are a tumbleweed!)", 70, 50, 50, 100)
+        story.printDialog("Hey, I'm CorGuy the Door Guy! And you are a tumbleweed!", 70, 50, 50, 100)
         
     })
  
     story.queueStoryPart(function() {
-        let tumbleWeed = sprites.create(tumbleWeedImg, SpriteKind.Player)
+        tumbleWeed = sprites.create(tumbleWeedImg, SpriteKind.Player)
         tiles.placeOnTile(tumbleWeed, tiles.getTileLocation(25, 0))
         tumbleWeed.ay = 300  
     })
     
-}
+   
+    story.queueStoryPart(function() {
+        story.printDialog("Your mission is to play with all of the good pups who live on these plains", 70, 50, 50, 100)
+         
 
+    })
+    story.queueStoryPart(function() {
+        story.spriteMoveToTile(invisibleCamera, tiles.getTileLocation(0, 8), 100)
+         
+
+    })
+    story.queueStoryPart(function() {
+        story.spriteMoveToTile(invisibleCamera, tiles.getTileLocation(25, 8), 100)  
+    })
+    story.queueStoryPart(function() {
+      controller.moveSprite(tumbleWeed, 200, 0)
+      scene.cameraFollowSprite(tumbleWeed)
+      invisibleCamera.destroy()
+    })
+   
+}
+ controller.A.onEvent(ControllerButtonEvent.Pressed, function() {
+        if (tumbleWeed && tumbleWeed.isHittingTile(CollisionDirection.Bottom)){             
+            tumbleWeed.vy = -200
+        
+        }
+        
+    })
 introSequence()
