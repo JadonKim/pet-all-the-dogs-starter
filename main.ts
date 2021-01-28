@@ -50,6 +50,7 @@ function introSequence () {
         controller.moveSprite(tumbleWeed, 200, 0)
         scene.cameraFollowSprite(tumbleWeed)
         invisibleCamera.destroy()
+        introFinished = true 
     })
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -60,9 +61,33 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 function createDogs () {
     for (let dog of dogImgs) {
         newDog = sprites.create(dog, SpriteKind.Dog)
-        tiles.placeOnRandomTile(newDog, myTiles.tile4)
+        tiles.placeOnRandomTile(newDog, assets.tile`tile4`)
     }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Dog, function(thePlayer: Sprite, theDog: Sprite) {
+    if (!isPlaying && introFinished){
+        isPlaying = true
+        story.queueStoryPart(function() {
+            controller.moveSprite(thePlayer, 0, 0)
+            thePlayer.follow(theDog, 200)
+            story.spriteMoveToTile(theDog, tiles.getTileLocation (randint(0, 24), 11), 200)
+            theDog.startEffect(effects.smiles, 700)
+        })
+
+        
+        //After dog is finished playing
+        story.queueStoryPart(function() {
+            controller.moveSprite(thePlayer, 200, 0)
+            thePlayer.follow(null)
+            isPlaying = false
+            theDog.setKind(SpriteKind.HappyDog)
+        })
+        
+   }
+})
+
 }
+let introFinished = false
+let isPlaying = false 
 let newDog: Sprite = null
 let tumbleWeed: Sprite = null
 let corGuy: Sprite = null
@@ -225,4 +250,3 @@ img`
     `
 ]
 introSequence()
- 
