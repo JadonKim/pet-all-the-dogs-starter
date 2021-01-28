@@ -50,7 +50,7 @@ function introSequence () {
         controller.moveSprite(tumbleWeed, 200, 0)
         scene.cameraFollowSprite(tumbleWeed)
         invisibleCamera.destroy()
-        introFinished = true 
+        introFinished = true
     })
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -58,37 +58,38 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         tumbleWeed.vy = -200
     }
 })
-function createDogs () {
-    for (let dog of dogImgs) {
-        newDog = sprites.create(dog, SpriteKind.Dog)
-        tiles.placeOnRandomTile(newDog, assets.tile`tile4`)
-    }
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Dog, function(thePlayer: Sprite, theDog: Sprite) {
-    if (!isPlaying && introFinished){
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Dog, function (thePlayer, theDog) {
+    if (!(isPlaying) && introFinished) {
         isPlaying = true
-        story.queueStoryPart(function() {
+        story.queueStoryPart(function () {
             controller.moveSprite(thePlayer, 0, 0)
             thePlayer.follow(theDog, 200)
-            story.spriteMoveToTile(theDog, tiles.getTileLocation (randint(0, 24), 11), 200)
+            story.spriteMoveToTile(theDog, tiles.getTileLocation(randint(0, 24), 11), 200)
             theDog.startEffect(effects.smiles, 700)
         })
-
-        
-        //After dog is finished playing
-        story.queueStoryPart(function() {
+        story.queueStoryPart(function () {
             controller.moveSprite(thePlayer, 200, 0)
             thePlayer.follow(null)
             isPlaying = false
             theDog.setKind(SpriteKind.HappyDog)
         })
-        
-   }
+    }
 })
-
+function createDogs () {
+    for (let dog of dogImgs) {
+        grassTiles = tiles.getTilesByType(assets.tile`tile4`)
+        let randomIndex = randint(0, grassTiles.length - 1)
+        let targetTile = grassTiles[randomIndex]
+        newDog = sprites.create(dog, SpriteKind.Dog)
+        tiles.placeOnTile(newDog, targetTile)
+        grassTiles.removeAt(randomIndex)
+    }
 }
-let introFinished = false
-let isPlaying = false 
+let happyDogs: Sprite[] = []
 let newDog: Sprite = null
+let grassTiles: tiles.Location[] = []
+let isPlaying = false
+let introFinished = false
 let tumbleWeed: Sprite = null
 let corGuy: Sprite = null
 let invisibleCamera: Sprite = null
@@ -250,3 +251,10 @@ img`
     `
 ]
 introSequence()
+game.onUpdate(function () {
+    happyDogs = sprites.allOfKind(SpriteKind.HappyDog)
+    if (happyDogs.length == dogImgs.length) {
+        pause(1000)
+        game.over(true)
+    }
+})
